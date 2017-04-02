@@ -20,6 +20,7 @@
                            name="username"
                            title="username"
                            class="form-control"
+                           autocomplete="off"
                            placeholder="Username to search">
                 </div>
                 <div class="form-group">
@@ -68,7 +69,7 @@
         $.ajax(settings).done(function (response) {
             var responseArray = jQuery.parseJSON(response);
             console.log(responseArray[0]['pp_country_rank']);
-            $("body").html(response);
+            $("#response").html("Country PP Rank: " + responseArray[0]['pp_country_rank']);
             return responseArray;
         });
     }
