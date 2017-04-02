@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OSU! Statistics</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="container">
+    <div class="jumbotron">
+        <h1>OSU!Statistics</h1>
+        <div>
+            <form id="username-form">
+                <div class="form-group">
+                    <label for="username-input"
+                           class="form-control-label">Username</label>
+                    <input type="text"
+                           id="username-input"
+                           name="username"
+                           title="username"
+                           class="form-control"
+                           placeholder="Username to search">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Search</button>
+                </div>
+            </form>
+        </div>
+        <div id="response">
+
+        </div>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/tether.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script>
+    var api = 'https://osu.ppy.sh/api/';
+    var key = '51ada042576f08d5f417df8a746d0fefd6320c74';
+    var form = new FormData();
+
+    form.append("k", key);
+
+    function setElement(element, data) {
+        $(element).html(data);
+    }
+
+
+    function setSettings(url) {
+        return {
+            "async": true,
+            "crossDomain": true,
+            "url": url,
+            "method": "POST",
+            "processData": false,
+            "contentType": false,
+            "mimeType": "multipart/form-data",
+            "data": form
+        };
+    }
+
+    function loadUser(username) {
+        form.append("u", username);
+        form.append("m", 0);
+        form.append("mode", "string");
+        var settings = setSettings(api + 'get_user');
+        $.ajax(settings).done(function (response) {
+            var responseArray = jQuery.parseJSON(response);
+            console.log(responseArray[0]['pp_country_rank']);
+            $("body").html(response);
+            return responseArray;
+        });
+    }
+
+    $("form").submit(function (event) {
+        var formdata = $(this).serializeArray();
+        var username = formdata[0]['value'];
+        loadUser(username);
+        event.preventDefault();
+    });
+</script>
+</body>
+</html>
