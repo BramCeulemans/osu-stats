@@ -5,11 +5,12 @@
     <title>OSU! Statistics</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 <div class="container">
     <div class="jumbotron">
-        <h1>OSU!Statistics</h1>
+        <h1>OSU!Statistics <i id="loadicon"></i></h1>
         <div>
             <form id="username-form">
                 <div class="form-group">
@@ -24,12 +25,40 @@
                            placeholder="Username to search">
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-success">Search</button>
+                    <button type="submit"
+                            class="btn btn-success">Search
+                    </button>
                 </div>
             </form>
         </div>
-        <div id="response">
-
+        <div class="card">
+            <div class="card-block">
+                <div class="card-text">
+                    Country PP Rank:&nbsp;
+                    <span id="country-pp-rank"></span>
+                    <br/>
+                    Global PP Rank:&nbsp;
+                    <span id="global-pp-rank"></span>
+                    <br/>
+                    Playcount:&nbsp;
+                    <span id="playcount"></span>
+                    <br/>
+                    300's:&nbsp;
+                    <span id="300-hits"></span>
+                    <br/>
+                    100's:&nbsp;
+                    <span id="100-hits"></span>
+                    <br/>
+                    50's:&nbsp;
+                    <span id="50-hits"></span>
+                    <br/>
+                    Total hits:&nbsp;
+                    <span id="total-hits"></span>
+                    <br/>
+                    Accuracy:&nbsp;
+                    <span id="accuracy"></span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -47,6 +76,13 @@
         $(element).html(data);
     }
 
+    function loadIcon(show) {
+        if(show){
+            $("#loadicon").addClass("fa fa-circle-o-notch fa-spin");
+        } else {
+            $("#loadicon").removeClass("fa fa-circle-o-notch fa-spin");
+        }
+    }
 
     function setSettings(url) {
         return {
@@ -57,7 +93,8 @@
             "processData": false,
             "contentType": false,
             "mimeType": "multipart/form-data",
-            "data": form
+            "data": form,
+            "beforeSend": loadIcon(true)
         };
     }
 
@@ -68,9 +105,15 @@
         var settings = setSettings(api + 'get_user');
         $.ajax(settings).done(function (response) {
             var responseArray = jQuery.parseJSON(response);
-            console.log(responseArray[0]['pp_country_rank']);
-            $("#response").html("Country PP Rank: " + responseArray[0]['pp_country_rank']);
-            return responseArray;
+            loadIcon(false);
+            setElement("#country-pp-rank", "#" + responseArray[0]['pp_country_rank']);
+            setElement("#global-pp-rank", "#" + responseArray[0]['pp_rank']);
+            setElement("#playcount", responseArray[0]['playcount']);
+            setElement("#300-hits", responseArray[0]['count300']);
+            setElement("#100-hits", responseArray[0]['count100']);
+            setElement("#50-hits", responseArray[0]['count50']);
+            setElement("#total-hits", parseInt(responseArray[0]['count300']) + parseInt(responseArray[0]['count100']) + parseInt(responseArray[0]['count50']));
+            setElement("#accuracy", parseFloat(responseArray[0]['accuracy']) + "%");
         });
     }
 
